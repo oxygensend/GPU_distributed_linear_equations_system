@@ -1,0 +1,39 @@
+"C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=C:/Program Files/JetBrains/CLion 2022.3.3/bin/ninja/win/x64/ninja.exe" "-DCMAKE_CUDA_COMPILER=C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe" -G Ninja -S "C:\Users\Tomasz\Documents\studia\Studio projektowe\project" -B "C:\Users\Tomasz\Documents\studia\Studio projektowe\project\cmake-build-debug"
+-- The CUDA compiler identification is NVIDIA 12.1.66
+-- Detecting CUDA compiler ABI info
+-- Detecting CUDA compiler ABI info - failed
+-- Check for working CUDA compiler: C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe
+-- Check for working CUDA compiler: C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe - broken
+CMake Error at C:/Program Files/JetBrains/CLion 2022.3.3/bin/cmake/win/x64/share/cmake-3.24/Modules/CMakeTestCUDACompiler.cmake:102 (message):
+  The CUDA compiler
+
+    "C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/bin/nvcc.exe"
+
+  is not able to compile a simple test program.
+
+  It fails with the following output:
+
+    Change Dir: C:/Users/Tomasz/Documents/studia/Studio projektowe/project/cmake-build-debug/CMakeFiles/CMakeTmp
+    
+    Run Build Command(s):C:/Program Files/JetBrains/CLion 2022.3.3/bin/ninja/win/x64/ninja.exe cmTC_5983b && [1/2] Building CUDA object CMakeFiles\cmTC_5983b.dir\main.cu.obj
+    main.cu
+    tmpxft_000008a4_00000000-10_main.cudafe1.cpp
+    [2/2] Linking CUDA executable cmTC_5983b.exe
+    FAILED: cmTC_5983b.exe 
+    cmd.exe /C "cd . && "C:\Program Files\JetBrains\CLion 2022.3.3\bin\cmake\win\x64\bin\cmake.exe" -E vs_link_exe --intdir=CMakeFiles\cmTC_5983b.dir --rc=rc --mt=CMAKE_MT-NOTFOUND --manifests  -- C:\PROGRA~1\MICROS~2\2022\PROFES~1\VC\Tools\MSVC\1435~1.322\bin\Hostx64\x64\link.exe /nologo CMakeFiles\cmTC_5983b.dir\main.cu.obj  /out:cmTC_5983b.exe /implib:cmTC_5983b.lib /pdb:cmTC_5983b.pdb /version:0.0 /debug /INCREMENTAL  cudadevrt.lib  cudart_static.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib -LIBPATH:"C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v12.1/lib/x64"  && cd ."
+    RC Pass 1: command "rc /fo CMakeFiles\cmTC_5983b.dir/manifest.res CMakeFiles\cmTC_5983b.dir/manifest.rc" failed (exit code 0) with the following output:
+    Nie można odnaleźć określonego pliku
+    ninja: build stopped: subcommand failed.
+    
+    
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:2 (project)
+
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/Tomasz/Documents/studia/Studio projektowe/project/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "C:/Users/Tomasz/Documents/studia/Studio projektowe/project/cmake-build-debug/CMakeFiles/CMakeError.log".
