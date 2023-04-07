@@ -9,7 +9,7 @@ M = []
 clients = []
 started = False
 tasks = []
-batch_size = 10
+batch_size = 100
 x_size = 100
 task_marker = 0
 
@@ -96,6 +96,7 @@ class SolverServer(WebSocket):
                         if(tasks[task_marker][0] == 0):
                             to_solve.append(task_marker)
                             print(to_solve)
+                            tasks[task_marker][1] = self
                             tasks[task_marker][0] = 1
                             task_marker += 1
                             if task_marker == x_size:
@@ -115,6 +116,8 @@ class SolverServer(WebSocket):
                 }))
 
         if data['type'] == 4:
+            tasks[data['task']][0] = 2
+            tasks[data['task']][2] = data['solution']
             print(data)
 
     def connected(self):
