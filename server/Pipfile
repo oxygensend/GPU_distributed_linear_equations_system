@@ -6,6 +6,10 @@ name = "pypi"
 [packages]
 flask = "*"
 pytest = "*"
+simple-websocket-server = "*"
+numpy = "*"
+h5py = "*"
+websocket-client = "*"
 
 [dev-packages]
 

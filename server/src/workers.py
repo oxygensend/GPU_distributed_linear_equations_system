@@ -2,7 +2,7 @@ import socket
 from time import sleep
 
 workers = []
-SLEEP_TIME_S = 10
+SLEEP_TIME_S = 1    
 
 
 def check_workers():
@@ -15,7 +15,7 @@ def check_workers():
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.settimeout(1)
-                s.connect((worker['ip'], worker['port']))
+                s.connect((worker['ip'], worker['status_port']))
                 s.sendall(b'ping')
                 s.close()
                 worker['status'] = 'online'

@@ -16,12 +16,15 @@ def register():
     if violations is not None:
         return violations
     else:
-        port = body['port']
+        status_port = body['status_port']
+        app_port = body['app_port']
 
     worker = {
         'ip': ip,
-        'port': port,
-        'status': 'online'
+        'status_port': status_port,
+        'app_port': app_port,
+        'status': 'online',
+        'client': None
     }
 
     if worker not in workers:
@@ -43,7 +46,7 @@ def remove():
     if violations is not None:
         return violations
     else:
-        port = body['port']
+        port = body['status_port']
 
     for worker in workers:
         if worker['ip'] == ip and worker['port'] == port:
@@ -57,11 +60,11 @@ def remove():
 
 
 def validatePort(body):
-    if 'port' not in body:
+    if 'status_port' not in body:
         return {'status': 'port not found'}, 400
 
     try:
-        int(body['port'])
+        int(body['status_port'])
     except ValueError:
         return {'status': 'port must be an integer'}, 400
 
