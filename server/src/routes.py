@@ -1,5 +1,6 @@
 from flask import request, Flask
 from .workers import workers
+from flask import send_from_directory
 
 app = Flask(__name__)
 
@@ -57,6 +58,9 @@ def remove():
     return "Success", 204
 
 
+@app.route('/data/<path:filename>')
+def send_report(filename):
+    return send_from_directory(app.root_path + '/../data', filename)
 
 def validatePort(body):
     if 'status_port' not in body:
@@ -68,3 +72,4 @@ def validatePort(body):
         return {'status': 'port must be an integer'}, 400
 
     return None
+
