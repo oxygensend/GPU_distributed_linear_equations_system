@@ -6,29 +6,21 @@
 #include <websocketpp/common/thread.hpp>
 #include <json/json.h>
 
-// void wait_a_bit() {
-// #ifdef WIN32
-//     Sleep(1000);
-// #else
-//     sleep(1);
-// #endif
-// }
-
 
 class WebSocketClient {
 public:
-    typedef websocketpp::client<websocketpp::config::asio_client> client;
-    typedef websocketpp::lib::lock_guard<websocketpp::lib::mutex> scoped_lock;
+    typedef websocketpp::client <websocketpp::config::asio_client> client;
+    typedef websocketpp::lib::lock_guard <websocketpp::lib::mutex> scoped_lock;
 
     WebSocketClient();
 
-    void run(const std::string & uri);
+    void run(const std::string &uri);
 
     void on_open(websocketpp::connection_hdl hdl);
 
     void on_close(websocketpp::connection_hdl);
 
-    void on_message(client* c, websocketpp::connection_hdl hdl, client::message_ptr msg);
+    void on_message(client *c, websocketpp::connection_hdl hdl, client::message_ptr msg);
 
     void on_fail(websocketpp::connection_hdl);
 
