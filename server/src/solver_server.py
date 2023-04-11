@@ -27,18 +27,22 @@ class SolverServer(WebSocket):
         data = json.loads(self.data)
 
         if data['type'] == 0:
-            ip, port = self.address
-            workers.append( { 'ip': ip,
-             'app_port': port,
-             'status_port': data['status_port'],
-             'client': self
-            })
+            id, port = self.address
+            print(id)
+            for  worker in workers:
+                if worker['status_port'] == data['status_port']:
+                    worker['client'] = self
+                    worker['status'] = 'online'
+                    worker['app_port'] = port
+                
+
         
         if data['type'] == 1:
             tasks = ProblemGenerator.generate_matrices()
 
         if data['type'] == 2:
             for worker in workers:
+
                 to_solve = []
                 safety = 0
                 for i in range(ProblemGenerator.batch_size):

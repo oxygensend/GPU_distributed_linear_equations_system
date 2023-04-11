@@ -22,6 +22,7 @@ def check_workers():
                 print('Stable connection')
             except Exception as e:
                 worker['status'] = 'offline'
+                print(e, worker)
                 # TODO if is not alive pass his job to another process
 
         sleep(SLEEP_TIME_S)

@@ -17,12 +17,11 @@ def register():
         return violations
     else:
         status_port = body['status_port']
-        app_port = body['app_port']
 
     worker = {
         'ip': ip,
         'status_port': status_port,
-        'app_port': app_port,
+        'app_port': None,
         'status': 'online',
         'client': None
     }
@@ -49,7 +48,7 @@ def remove():
         port = body['status_port']
 
     for worker in workers:
-        if worker['ip'] == ip and worker['port'] == port:
+        if worker['ip'] == ip and worker['status_port'] == port:
             workers.remove(worker)
             break
     else:
