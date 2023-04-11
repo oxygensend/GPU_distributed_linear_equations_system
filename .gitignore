@@ -1,2 +1,4 @@
 .history
 .vscode/
+cmake-build-debug/
+.idea/

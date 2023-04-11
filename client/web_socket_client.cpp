@@ -3,8 +3,7 @@
 
 using namespace std;
 
-WebSocketClient::WebSocketClient() : m_open(false), m_done(false)
-{
+WebSocketClient::WebSocketClient() : m_open(false), m_done(false) {
 
 
     // Set up logs
@@ -25,13 +24,11 @@ WebSocketClient::WebSocketClient() : m_open(false), m_done(false)
     m_client.set_message_handler(bind(&WebSocketClient::on_message, this, &m_client, _1, _2));
 }
 
-void WebSocketClient::run(const std::string &uri)
-{
+void WebSocketClient::run(const std::string &uri) {
     // Create connection
     websocketpp::lib::error_code ec;
     client::connection_ptr con = m_client.get_connection(uri, ec);
-    if (ec)
-    {
+    if (ec) {
         m_client.get_alog().write(websocketpp::log::alevel::app,
                                   "Get Connection Error: " + ec.message());
         return;
@@ -50,11 +47,10 @@ void WebSocketClient::run(const std::string &uri)
     client_thread.join();
 }
 
-void WebSocketClient::on_open(websocketpp::connection_hdl hdl)
-{
+void WebSocketClient::on_open(websocketpp::connection_hdl hdl) {
     // Open connection
     m_client.get_alog().write(websocketpp::log::alevel::app,
-                              "Connection opened, starting telemetry!");
+                              "Connection opened, starting GPU!");
 
     scoped_lock guard(m_lock);
     m_open = true;
@@ -66,8 +62,7 @@ void WebSocketClient::on_open(websocketpp::connection_hdl hdl)
     m_client.send(hdl, msg.toStyledString(), websocketpp::frame::opcode::text);
 }
 
-void WebSocketClient::on_close(websocketpp::connection_hdl)
-{
+void WebSocketClient::on_close(websocketpp::connection_hdl) {
     m_client.get_alog().write(websocketpp::log::alevel::app,
                               "Connection closed!");
 
@@ -75,36 +70,29 @@ void WebSocketClient::on_close(websocketpp::connection_hdl)
     m_done = true;
 }
 
-void WebSocketClient::on_message(client *c, websocketpp::connection_hdl hdl, client::message_ptr msg)
-{
-    try
-    {
+void WebSocketClient::on_message(client *c, websocketpp::connection_hdl hdl, client::message_ptr msg) {
+    try {
         Json::Value data;
         Json::Reader reader;
-        if (reader.parse(msg->get_payload(), data))
-        {
+        if (reader.parse(msg->get_payload(), data)) {
             cout << data << endl;
-            if (data["type"] == 3)
-            {
-                SingletonVector* singleton_vector = SingletonVector::getInstance();
+            if (data["type"] == 3) {
+                SingletonVector *singleton_vector = SingletonVector::getInstance();
                 const Json::Value in = data["to_solve"];
                 vector<int> temp_vector;
-                transform(in.begin(), in.end(), back_inserter(temp_vector), [](const auto &e)
-                          { return e.asInt(); });
-                        
+                transform(in.begin(), in.end(), back_inserter(temp_vector), [](const auto &e) { return e.asInt(); });
+
                 singleton_vector->setVector(temp_vector);
             }
         }
     }
-    catch (exception &e)
-    {
+    catch (exception &e) {
         cerr << "Error: " << e.what() << endl;
     }
 }
 
 // The fail handler will signal that we should stop sending telemetry
-void WebSocketClient::on_fail(websocketpp::connection_hdl)
-{
+void WebSocketClient::on_fail(websocketpp::connection_hdl) {
     m_client.get_alog().write(websocketpp::log::alevel::app,
                               "Connection failed!");
 
@@ -112,45 +100,38 @@ void WebSocketClient::on_fail(websocketpp::connection_hdl)
     m_done = true;
 }
 
-void WebSocketClient::loop()
-{
+void WebSocketClient::loop() {
     uint64_t count = 0;
     std::stringstream val;
     websocketpp::lib::error_code ec;
 
-    while (1)
-    {
+    while (1) {
         bool wait = false;
 
         {
             scoped_lock guard(m_lock);
             // If the connection has been closed, stop
-            if (m_done)
-            {
+            if (m_done) {
                 break;
             }
 
             // If the connection hasn't been opened yet wait a bit and retry
-            if (!m_open)
-            {
+            if (!m_open) {
                 wait = true;
             }
         }
 
-        if (wait)
-        {
-        sleep(1);
+        if (wait) {
+            this_thread::sleep_for(chrono::milliseconds(1000));
             continue;
         }
 
-        if (ec)
-        {
+        if (ec) {
             m_client.get_alog().write(websocketpp::log::alevel::app,
                                       "Send Error: " + ec.message());
             break;
         }
 
-        // wait_a_bit();
-        sleep(1);
+        this_thread::sleep_for(chrono::milliseconds(1000));
     }
 }
