@@ -19,7 +19,7 @@ def check_workers():
                 s.sendall(b'ping')
                 s.close()
                 worker['status'] = 'online'
-                print('Stable connection')
+                print('Stable connection with ', worker)
             except Exception as e:
                 worker['status'] = 'offline'
                 print(e, worker)
