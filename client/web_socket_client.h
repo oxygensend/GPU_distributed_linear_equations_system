@@ -24,6 +24,8 @@ public:
 
     void on_fail(websocketpp::connection_hdl);
 
+    void send_message(const std::string message);
+
     void loop();
 
 private:

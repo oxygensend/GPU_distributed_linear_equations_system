@@ -135,3 +135,13 @@ void WebSocketClient::loop() {
         this_thread::sleep_for(chrono::milliseconds(1000));
     }
 }
+
+
+void WebSocketClient::send_message(string message) {
+    m_client.get_alog().write(websocketpp::log::alevel::app,
+                              "Sending message to server " + message);
+
+
+    client::connection_ptr con = m_client.get_con_from_hdl(m_hdl);
+    m_client.send(con, message, websocketpp::frame::opcode::text);
+}
