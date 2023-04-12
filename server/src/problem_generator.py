@@ -1,6 +1,7 @@
 import numpy as np
 import time
 import h5py
+from src import app
 
 class ProblemGenerator:
 
@@ -44,7 +45,7 @@ class ProblemGenerator:
         #         print(str(ind) + "/" + str(x_size))  
         
         for ind, matrix in enumerate(M):
-            h5f = h5py.File('../data/data'+str(ind)+'.h5', 'w')
+            h5f = h5py.File(app.root_path + '/../data/data'+str(ind)+'.h5', 'w')
             h5f.create_dataset('dataset', data=matrix)
             print(str(ind) + "/" + str(cls.x_size))  
         
