@@ -8,6 +8,8 @@
 #include<assert.h>
 #include<ostream>
 
+#include <fstream>
+
 #include <cusolverDn.h>
 #include <cublas_v2.h>
 #include <cuda_runtime_api.h>
@@ -84,22 +86,29 @@ protected:
     difference_type stride;
 };
 
-int main(void)
+int main(int argc, char* argv[])
 {
+    if (argc != 1) {
+        perror("You must specify file name as first argument.");
+        exit(-1);
+        }
 
+        std::fstream newfile;
+        newfile.open("data0.txt", std::ios::in); //open a file to perform read operation using file object
 
-        const int Nrows = 5;
+        const int Nrows = 100;
         const int STRIDE = Nrows + 1;
-        srand(time(0));
+         double h_A[Nrows][Nrows];
 
-        double h_A[Nrows][Nrows] = {
-           { 2.,    -2.,    -2.,    -2.,    -2.,},
-           {-2.,     4.,     0.,     0.,     0.,},
-           {-2.,     0.,     6.,     2.,     2.,},
-           {-2.,     0.,     2.,     8.,     4.,},
-           {-2.,     0.,     2.,     4.,     10.,}
-        };
+        for (int i = 0; i < Nrows; i++)
+        {
+            for (int j = 0; j < Nrows; j++)
+            {
+                newfile >> h_A[i][j];
+            }
 
+        }
+  
         // --- Setting the device matrix and moving the host matrix to the device
         double* d_A;
 
@@ -140,12 +149,8 @@ int main(void)
         typedef thrust::device_vector<double>::iterator Iterator;
         strided_range<Iterator> pos(dev_ptr, dev_ptr + Nrows * Nrows, STRIDE);
 
-        try {
-        double det = thrust::reduce(pos.begin(), pos.end(), 1., thrust::maximum<double>());
+ 
+        double det = thrust::reduce(pos.begin(), pos.end(), 1., thrust::multiplies<double>());
         det = det * det;
-
-    }
-    catch (std::exception& e) {
-        printf(e.what());
-    }
+        printf("Determinant: %f", det);
 }
