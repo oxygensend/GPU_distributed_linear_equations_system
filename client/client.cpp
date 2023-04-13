@@ -7,13 +7,14 @@
 #include  "web_socket_client.h"
 #include "singleton_vector.h"
 #include <fstream>
-//#include <H5Cpp.h>
+#include <H5Cpp.h>
+#include <H5public.h>
 //#include <hdf5.h>
 //#include <hdf5_hl.h>
 //
 
 
-//using namespace H5;
+using namespace H5;
 using namespace std;
 
 // ten kod musi zostac odpalony na odzielnym watku w cudzie
@@ -54,12 +55,12 @@ void runStatusListener() {
             return;
         }
 
-        cout << "Connected!" << std::endl;
+        cout << "Connected with server!" << std::endl;
         close(new_socket);
     }
 }
 
-int sendRegistrationRequest() {
+int sendRegistrationRequest(string server_uri) {
     CURL *curl = curl_easy_init();
     if (!curl) {
         cerr << "Error initializing curl" << endl;
@@ -71,7 +72,7 @@ int sendRegistrationRequest() {
 
     string body = "{\"status_port\": " + to_string(STATUS_PORT) + "}";
 
-    string url = "http://192.168.1.12:3000/register";
+    string url = server_uri + "/register";
 
     cout << url << endl;
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -91,7 +92,7 @@ int sendRegistrationRequest() {
     return 0;
 }
 
-void sendRemoveRequest() {
+void sendRemoveRequest(string server_uri) {
     CURL *curl = curl_easy_init();
     if (!curl) {
         cerr << "Error initializing curl" << endl;
@@ -102,7 +103,7 @@ void sendRemoveRequest() {
     headers = curl_slist_append(headers, "Content-Type: application/json");
 
     string body = "{\"status_port\": " + to_string(STATUS_PORT) + "}";
-    string url = "http://192.168.1.12:3000/remove";
+    string url =  server_uri + "/remove";
 
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
@@ -123,15 +124,18 @@ static size_t curlWriteToBufferCallback(void *contents, size_t size, size_t nmem
     return size * nmemb;
 }
 
-int main() {
+int main(int argc, char* argv[]) {
+
+    string hostname = (argc != 2) ? "localhost" : argv[1];
+    string ws_uri = "ws://" + hostname + ":1111";
+    string http_uri = "http://" + hostname + ":3000";
 
     WebSocketClient c;
-    string uri = "ws://192.168.1.12:1111";
     SingletonVector *v = SingletonVector::getInstance();
 
 
     // REGISTER MACHINE
-    if (sendRegistrationRequest()) {
+    if (sendRegistrationRequest(http_uri)) {
         return 1;
     };
 
@@ -142,8 +146,8 @@ int main() {
     t_status_check.detach();
 
     // Collect data from server
-    thread t_client([&c, &uri]() {
-        c.run(uri);
+    thread t_client([&c, &ws_uri]() {
+        c.run(ws_uri);
     });
     t_client.detach();
 
@@ -159,7 +163,7 @@ int main() {
             for (auto task: v->getVector()) {
 
                 // Download file from server into buffer
-                string url = "http://192.168.1.12:3000/data/data" + to_string(task) + ".h5";
+                string url = http_uri + "/data/data" + to_string(task) + ".h5";
                 string readBuffer;
 
                 curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
@@ -168,6 +172,30 @@ int main() {
                 CURLcode result = curl_easy_perform(curl);
 
                 if (result == CURLE_OK) {
+
+//                    H5File file;
+//                    file.openFile(readBuffer, H5F_ACC_RDONLY);
+//
+//                    // Read the dataset into a matrix
+//                    DataSet dataset = file.openDataSet("your dataset name");
+//                    DataSpace dataspace = dataset.getSpace();
+//                    int ndims = dataspace.getSimpleExtentNdims();
+//                    hsize_t dims[ndims];
+//                    dataspace.getSimpleExtentDims(dims, NULL);
+//                    double data[dims[0]][dims[1]];
+//                    dataset.read(data, PredType::NATIVE_DOUBLE);
+//
+//
+//                    // Print the matrix
+//                    for (int i = 0; i < dims[0]; i++) {
+//                        for (int j = 0; j < dims[1]; j++) {
+//                            cout << data[i][j] << " ";
+//                        }
+//                        cout << endl;
+//                    }
+
+                    // Close the file
+//                    file.close();
 //                    cout << url << endl;
 ////
 //                    size_t size = readBuffer.size();
@@ -217,7 +245,7 @@ int main() {
 
 
     }
-    sendRemoveRequest();
+    sendRemoveRequest(http_uri);
 
     return 0;
 
