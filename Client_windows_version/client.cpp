@@ -124,7 +124,7 @@ static size_t curlWriteToBufferCallback(void* contents, size_t size, size_t nmem
 
 int main(int argc, char* argv[]) {
 
-    string hostname = (argc != 2) ? "192.168.0.234" : argv[1];
+    string hostname = (argc != 2) ? "localhost" : argv[1];
     string ws_uri = "ws://" + hostname + ":1111";
     string http_uri = "http://" + hostname + ":3000";
 
