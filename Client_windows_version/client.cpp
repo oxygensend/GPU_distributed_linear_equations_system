@@ -15,8 +15,7 @@
 using namespace std;
 
 // ten kod musi zostac odpalony na odzielnym watku w cudzie
-// constexpr int STATUS_PORT = 65432;
-#define STATUS_PORT 65435
+ constexpr int STATUS_PORT = 65432;
 
 void runStatusListener() {
     int server_fd, new_socket;
@@ -38,17 +37,22 @@ void runStatusListener() {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons(STATUS_PORT);
    
-    bind(server_fd, (struct sockaddr*)&address, sizeof(address));
-    cout << addrlen << endl;
+    if (::bind(server_fd, reinterpret_cast<struct sockaddr*>(&address), sizeof(address)) == SOCKET_ERROR) {
+        cerr << "Bind failed: " << WSAGetLastError() << endl;
+        closesocket(server_fd);
+        WSACleanup();
+        return;
+    }  
+    
     if (listen(server_fd, 2) == -1) {
         cerr << "Listen failed: " << WSAGetLastError() << std::endl;
         return;
     }
 
     while (true) {
-        if ((new_socket = accept(server_fd, (struct sockaddr*)&address,(int*)(&addrlen))) ==
-            -1) {
-            cerr << "Accept failed" << std::endl;
+     
+        if ((new_socket = accept(server_fd, (struct sockaddr*)&address,(int*)(&addrlen))) < -1) {
+            cerr << "Accept failed: " << WSAGetLastError() <<  std::endl;
             return;
         }
 
