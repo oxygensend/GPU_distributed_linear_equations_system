@@ -10,12 +10,19 @@
 //#include <hdf5_hl.h>
 //
 #pragma comment(lib, "ws2_32.lib") // Link with ws2_32.lib
+#pragma warning(disable:4996)
 
 
 using namespace std;
 
 // ten kod musi zostac odpalony na odzielnym watku w cudzie
  constexpr int STATUS_PORT = 65432;
+
+
+ struct taskStruct {
+     string downloaded_file;
+     int task_number;
+ };
 
 void runStatusListener() {
     int server_fd, new_socket;
@@ -118,12 +125,53 @@ void sendRemoveRequest(string server_uri) {
     }
 
     curl_easy_cleanup(curl);
+
 }
 
 static size_t curlWriteToBufferCallback(void* contents, size_t size, size_t nmemb, void* userp)
 {
     ((std::string*)userp)->append((char*)contents, size * nmemb);
     return size * nmemb;
+}
+
+static size_t curlWriteToFileCallback(void* ptr, size_t size, size_t nmemb, FILE* stream) {
+    size_t written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
+
+
+void downloadFiles(SingletonVector* v, vector<taskStruct>& downloaded_files, string http_uri) {
+    
+    CURL* curl = curl_easy_init();
+    if (!curl) {
+        cerr << "Error: could not initialize cURL" << endl;
+        return;
+    }
+    for (auto task : v->getVector()) {
+
+        string url = http_uri + "/data/data" + to_string(task) + ".h5";
+        string file_path = "..\\data\\data" + to_string(task) + ".h5";
+        // string readBuffer;
+        FILE* fp = fopen(file_path.c_str(), "wb");
+        curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteToFileCallback);
+        // curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
+        CURLcode result = curl_easy_perform(curl);
+        fclose(fp);
+        cout << task << endl;
+   
+        if (result == CURLE_OK) {
+            v->removeElement(task);
+            taskStruct t = { file_path, task };
+            downloaded_files.push_back(t);
+
+        }
+        else {
+            cerr << "Error: could not download file " << url << " (cURL error code " << result << ")" << endl;
+        }
+    }
+    curl_easy_cleanup(curl);
 }
 
 int main(int argc, char* argv[]) {
@@ -134,7 +182,7 @@ int main(int argc, char* argv[]) {
 
     WebSocketClient c;
     SingletonVector* v = SingletonVector::getInstance();
-
+    vector<taskStruct> downloaded_files;
 
     // REGISTER MACHINE
     if (sendRegistrationRequest(http_uri)) {
@@ -153,95 +201,36 @@ int main(int argc, char* argv[]) {
         });
     t_client.detach();
 
-    // GPU logic
-    while (true) {
+  
+    // Download data from server         
+    thread t_downloader([&v, &downloaded_files, http_uri]() {
+        while (true) {
 
-        if (!v->isEmpty()) {
-            CURL* curl = curl_easy_init();
-            if (!curl) {
-                cerr << "Error: could not initialize cURL" << endl;
-                continue;
+            if (!v->isEmpty()) {
+                downloadFiles(v, downloaded_files, http_uri);
             }
-            for (auto task : v->getVector()) {
-
-                // Download file from server into buffer
-                string url = http_uri + "/data/data" + to_string(task) + ".h5";
-                string readBuffer;
-
-                curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-                curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriteToBufferCallback);
-                curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-                CURLcode result = curl_easy_perform(curl);
-
-                if (result == CURLE_OK) {
-
-                    //                    H5File file;
-                    //                    file.openFile(readBuffer, H5F_ACC_RDONLY);
-                    //
-                    //                    // Read the dataset into a matrix
-                    //                    DataSet dataset = file.openDataSet("your dataset name");
-                    //                    DataSpace dataspace = dataset.getSpace();
-                    //                    int ndims = dataspace.getSimpleExtentNdims();
-                    //                    hsize_t dims[ndims];
-                    //                    dataspace.getSimpleExtentDims(dims, NULL);
-                    //                    double data[dims[0]][dims[1]];
-                    //                    dataset.read(data, PredType::NATIVE_DOUBLE);
-                    //
-                    //
-                    //                    // Print the matrix
-                    //                    for (int i = 0; i < dims[0]; i++) {
-                    //                        for (int j = 0; j < dims[1]; j++) {
-                    //                            cout << data[i][j] << " ";
-                    //                        }
-                    //                        cout << endl;
-                    //                    }
-
-                                        // Close the file
-                    //                    file.close();
-                    //                    cout << url << endl;
-                    ////
-                    //                    size_t size = readBuffer.size();
-                    //
-                    //                    H5File filebuf
-                    //
-                    //                    // create an in-memory file
-                    //                    hid_t file_id = H5Fcreate("file.h5", H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
-                    //
-                    //                    // create a dataset in the file
-                    //                    hsize_t dims[2] = {10, 10};
-                    //                    hid_t dataspace_id = H5Screate_simple(2, dims, nullptr);
-                    //                    hid_t dataset_id = H5Dcreate(file_id, "dataset", H5T_NATIVE_INT, dataspace_id, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-                    //
-                    //                    // write the data to the dataset
-                    //                    H5Dwrite(dataset_id, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, readBuffer.c_str());
-                    //
-                    //                    // read the data back from the dataset
-                    //                    int data[100];
-                    //                    cout << data[0] << endl;
-                    //                    H5LTread_dataset_int(file_id, "dataset", data);
-                    //
-                    //                    // cleanup
-                    //                    H5Dclose(dataset_id);
-                    //                    H5Sclose(dataspace_id);
-                    //                    H5Fclose(file_id);
-                    //
-
-                                            // Send solution
-                    Json::Value msg;
-                    msg["type"] = 4;
-                    msg["task"] = task;
-                    msg["solution"] = 4;
-                    c.send_message(msg.toStyledString());
-
-                    // Remove from queue
-                    v->removeElement(task);
-                }
-                else {
-                    cerr << "Error: could not download file " << url << " (cURL error code " << result << ")"
-                        << endl;
-                }
+            else {
+                this_thread::sleep_for(chrono::milliseconds(100));
             }
-            curl_easy_cleanup(curl);
+        }
+        });
+     t_downloader.detach();
+
+
+     while(true){
+        if (!downloaded_files.empty()) {
+            cout << downloaded_files.size() << endl;
+            // TUDAJ ODPALIC BINARKE CUDY
+
+            taskStruct t = downloaded_files.back();
+
+
+            Json::Value msg;
+            msg["type"] = 4;
+            msg["task"] = t.task_number;
+            msg["solution"] = 4;
+            c.send_message(msg.toStyledString());
+            downloaded_files.pop_back();
         }
         else {
             this_thread::sleep_for(chrono::milliseconds(100));

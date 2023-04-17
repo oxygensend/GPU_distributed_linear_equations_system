@@ -8,7 +8,7 @@ public:
     }
 
     void addElement(int element) {
-        vec.push_back(element);
+            vec.push_back(element);
     }
 
     void removeElement(int element) {
