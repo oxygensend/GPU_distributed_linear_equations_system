@@ -4,7 +4,6 @@
 #include <cuda_runtime.h>
 //#include "hdf5.h"
 #include <highfive/H5File.hpp>
-
 __global__ void detGaussKernel(double* mat, int n, double* det) {
     int i, j, k;
     double ratio;
@@ -28,31 +27,26 @@ __global__ void detGaussKernel(double* mat, int n, double* det) {
 }
 
 int main(int argc, char* argv[]) {
-    double* d_mat;
+    int n = 100;
+    double* mat, * d_mat;
     double det, * d_det;
 
-    HighFive::File file(argv[1], HighFive::File::ReadOnly);
-
-    auto dataset = file.getDataSet("dataset_1");
-    auto dataspace = dataset.getSpace();
-    std::vector<size_t> dims(dataspace.getDimensions());
-    std::vector<double> data(dims[0] * dims[1]);
-    dataset.read(data.data());
-
-    double* a = &data[0];
-
-    const int n = sqrt(data.size());
+    mat = new double[n * n];
     cudaMalloc(&d_mat, n * n * sizeof(double));
     cudaMalloc(&d_det, sizeof(double));
+    std::fstream newfile;
+    newfile.open(argv[1], std::ios::in);
+    // Fill matrix with random values
+    for (int i = 0; i < n * n; i++) {
+        newfile >> mat[i];
 
-
-
+    }
 
     // Copy matrix to device
-    cudaMemcpy(d_mat, a, n * n * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_mat, mat, n * n * sizeof(double), cudaMemcpyHostToDevice);
 
     // Calculate determinant on device
-    detGaussKernel << <1, 1 >> > (a, n, d_det);
+    detGaussKernel << <1, 1 >> > (d_mat, n, d_det);
 
     // Copy determinant from device
     cudaMemcpy(&det, d_det, sizeof(double), cudaMemcpyDeviceToHost);
@@ -60,7 +54,7 @@ int main(int argc, char* argv[]) {
     std::cout << "Determinant: " << det << std::endl;
 
     // Free memory
-
+    delete[] mat;
     cudaFree(d_mat);
     cudaFree(d_det);
 
