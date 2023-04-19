@@ -24,6 +24,12 @@
     <CudaCompile Include="Determinant_calculation_with_CUDA.cu">
       <Filter>Pliki źródłowe</Filter>
     </CudaCompile>
+    <CudaCompile Include="File.cu">
+      <Filter>Pliki źródłowe</Filter>
+    </CudaCompile>
+    <CudaCompile Include="Determinant_with_CUDA.cu">
+      <Filter>Pliki źródłowe</Filter>
+    </CudaCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cuda_kernel.cuh">

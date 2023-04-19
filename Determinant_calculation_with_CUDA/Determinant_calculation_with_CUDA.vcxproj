@@ -146,6 +146,8 @@
   <ItemGroup>
     <CudaCompile Include="cuda_kernel.cu" />
     <CudaCompile Include="Determinant_calculation_with_CUDA.cu" />
+    <CudaCompile Include="Determinant_with_CUDA.cu" />
+    <CudaCompile Include="File.cu" />
     <CudaCompile Include="Utilities.cu" />
   </ItemGroup>
   <ItemGroup>
