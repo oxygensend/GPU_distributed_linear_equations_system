@@ -29,12 +29,17 @@ __global__ void detGaussKernel(double* mat, int n, double* det) {
 
 int main(int argc, char* argv[]) {
 
+
+    if (argc != 3) {
+        perror("Pass file name as second argument and dataset name as third. \n");
+        return -1;
+    }
     double* mat, * d_mat;
     double det, * d_det;
 
     HighFive::File file(argv[1], HighFive::File::ReadOnly);
 
-    auto dataset = file.getDataSet("dataset_1");
+    auto dataset = file.getDataSet(argv[2]);
     auto dataspace = dataset.getSpace();
     std::vector<size_t> dims(dataspace.getDimensions());
     std::vector<double> data(dims[0] * dims[1]);
@@ -61,12 +66,18 @@ int main(int argc, char* argv[]) {
     // Copy determinant from device
     cudaMemcpy(&det, d_det, sizeof(double), cudaMemcpyDeviceToHost);
 
-    std::cout << "Determinant: " << det << std::endl;
+    //std::cout << "Determinant: " << det << std::endl;
     
+    std::ofstream output_file;
+    output_file.open("outputFile.txt", std::fstream::in | std::fstream::trunc);
+    output_file << det;
+
+
+    output_file.close();
     // Free memory
     //delete[] mat;
     cudaFree(d_mat);
     cudaFree(d_det);
 
-    return det;
+    return 0;
 }

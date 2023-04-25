@@ -9,7 +9,7 @@
 //#include <hdf5.h>
 //#include <hdf5_hl.h>
 //
-#pragma comment(lib, "ws2_32.lib") // Link with ws2_32.lib
+//#pragma comment(lib, "ws2_32.lib") // Link with ws2_32.lib
 #pragma warning(disable:4996)
 
 
@@ -219,16 +219,25 @@ int main(int argc, char* argv[]) {
 
      while(true){
         if (!downloaded_files.empty()) {
-            cout << downloaded_files.size() << endl;
+            //cout << downloaded_files.size() << endl;
             // TUDAJ ODPALIC BINARKE CUDY
 
             taskStruct t = downloaded_files.back();
 
+            string program = "..\\Determinant_calculation_with_CUDA.exe " + t.downloaded_file;
+            int programStatus = system(program.c_str());
+
+            double result;
+            std::ifstream output_file;
+            output_file.open("..\\outputFile.txt", std::fstream::in);
+            output_file >> result;
+            output_file.close();
 
             Json::Value msg;
             msg["type"] = 4;
             msg["task"] = t.task_number;
-            msg["solution"] = 4;
+            msg["solution"] = result;
+            cout << result << endl;
             c.send_message(msg.toStyledString());
             downloaded_files.pop_back();
         }
