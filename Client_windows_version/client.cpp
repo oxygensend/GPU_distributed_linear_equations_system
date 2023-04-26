@@ -6,6 +6,7 @@
 #include <fstream>
 #include "web_socket_client.h"
 #include "singleton_vector.h"
+#include <filesystem>
 //#include <hdf5.h>
 //#include <hdf5_hl.h>
 //
@@ -222,7 +223,7 @@ int main(int argc, char* argv[]) {
             //cout << downloaded_files.size() << endl;
             // TUDAJ ODPALIC BINARKE CUDY
 
-            taskStruct t = downloaded_files.back();
+            taskStruct t = downloaded_files[0];
 
             string program = "..\\Determinant_calculation_with_CUDA.exe " + t.downloaded_file;
             int programStatus = system(program.c_str());
@@ -239,7 +240,9 @@ int main(int argc, char* argv[]) {
             msg["solution"] = result;
             cout << result << endl;
             c.send_message(msg.toStyledString());
-            downloaded_files.pop_back();
+            downloaded_files.erase(downloaded_files.begin());
+
+            filesystem::remove(t.downloaded_file);
         }
         else {
             this_thread::sleep_for(chrono::milliseconds(100));
