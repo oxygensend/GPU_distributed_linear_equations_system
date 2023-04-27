@@ -234,6 +234,7 @@ int main(int argc, char* argv[]) {
             output_file >> result;
             output_file.close();
 
+          
             Json::Value msg;
             msg["type"] = 4;
             msg["task"] = t.task_number;
@@ -243,6 +244,14 @@ int main(int argc, char* argv[]) {
             downloaded_files.erase(downloaded_files.begin());
 
             filesystem::remove(t.downloaded_file);
+
+            // let the server know that mashine finished all tasks
+            if (downloaded_files.empty() && v->isEmpty()) {
+                Json::Value msg;
+                msg["type"] = 5;
+                c.send_message(msg.toStyledString());
+            }
+
         }
         else {
             this_thread::sleep_for(chrono::milliseconds(100));
