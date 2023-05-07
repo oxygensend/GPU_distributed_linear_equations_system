@@ -72,6 +72,7 @@ class SolverServer(WebSocket):
                     'type': 3,
                     'to_solve': to_solve
                 }))
+                worker['to_solve'] = to_solve;
 
         if data['type'] == 4:
             print(data)

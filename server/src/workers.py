@@ -1,8 +1,12 @@
 import socket
 from time import sleep
+import queue
+from .worker_offline_event import WorkerOfflineEvent
 
 workers = []
 SLEEP_TIME_S = 1    
+event_queue = queue.Queue();
+
 
 
 def check_workers():
@@ -10,6 +14,7 @@ def check_workers():
     Method that check if workers are alive and change their status if not.
     """
     global workers
+    global event_queue
     while True:
         for worker in workers:
             try:
@@ -23,7 +28,9 @@ def check_workers():
             except Exception as e:
                 worker['status'] = 'offline'
                 print(e, worker)
-                # TODO if is not alive pass his job to another process
+                # send event if worker is offline
+                event_queue.put(WorkerOfflineEvent({"a": "a"}))
+
 
         sleep(SLEEP_TIME_S)
 
@@ -42,4 +49,6 @@ def check_if_worker_exists_by_app_port_and_ip(port: int, ip: str):
             return key;
         else:
             return None
-        
+
+def get_all_online_workers() -> dict:
+        return {key: worker for key, worker in workers if worker["status_port"] == "online"}
