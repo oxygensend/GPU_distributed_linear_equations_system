@@ -90,13 +90,16 @@ class SolverServer(WebSocket):
             if worker_key is  None:
                 raise Exception("WHO IS THIS!!!!!!!!!!!! HANDEHOFFFFFFF")
 
+            end = True
             # if not every task is solved leave
             for task in tasks:
-                if len(task) < 3 or task[2] is None:
+                if len(task) < 3 or task[2] is None or task[2] == 0:
+                    end = False
                     return
  
             # result
-            print([task[2]/main_matrix_w for task in tasks[1:]])
+            if end:
+                print([task[2]/main_matrix_w for task in tasks[1:]])
 
 
     def connected(self):

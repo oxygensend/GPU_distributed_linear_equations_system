@@ -19,6 +19,8 @@ def check_workers():
         for worker in workers:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                s.bind(('0.0.0.0', 65432))
                 s.settimeout(1)
                 s.connect((worker['ip'], worker['status_port']))
                 s.sendall(b'ping')
@@ -26,14 +28,15 @@ def check_workers():
                 worker['status'] = 'online'
                 print('Stable connection with ', worker)
             except Exception as e:
-                worker['status'] = 'offline'
+                if worker['status'] == 'offline':
+                    continue
+
                 print(e, worker)
                 # send event if worker is offline
+                worker['status'] = 'offline'
                 event_queue.put(WorkerOfflineEvent({"a": "a"}))
 
-
         sleep(SLEEP_TIME_S)
-
 
 
 def check_if_worker_exists_by_status_port_and_ip(port: int, ip: str):
