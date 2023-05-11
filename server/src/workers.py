@@ -26,14 +26,15 @@ def check_workers():
                 worker['status'] = 'online'
                 print('Stable connection with ', worker)
             except Exception as e:
-                worker['status'] = 'offline'
+                if worker['status'] == 'offline':
+                    continue
+
                 print(e, worker)
                 # send event if worker is offline
+                worker['status'] = 'offline'
                 event_queue.put(WorkerOfflineEvent({"a": "a"}))
 
-
         sleep(SLEEP_TIME_S)
-
 
 
 def check_if_worker_exists_by_status_port_and_ip(port: int, ip: str):

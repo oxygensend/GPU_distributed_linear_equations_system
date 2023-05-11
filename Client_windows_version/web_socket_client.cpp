@@ -82,7 +82,9 @@ void WebSocketClient::on_message(client *c, websocketpp::connection_hdl hdl, cli
                 vector<int> temp_vector;
                 transform(in.begin(), in.end(), back_inserter(temp_vector), [](const auto &e) { return e.asInt(); });
 
-                singleton_vector->setVector(temp_vector);
+                for (int i : temp_vector)
+                    singleton_vector->addElement(i);
+       
             }
         }
     }
