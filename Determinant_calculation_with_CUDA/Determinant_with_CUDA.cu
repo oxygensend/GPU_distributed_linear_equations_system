@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
     //std::cout << "Determinant: " << det << std::endl;
     
     std::ofstream output_file;
-    output_file.open("outputFile.txt", std::fstream::in | std::fstream::trunc);
+    output_file.open("..\\outputFile.txt", std::fstream::in | std::fstream::trunc);
     output_file << det;
 
 
