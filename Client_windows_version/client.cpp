@@ -225,7 +225,7 @@ int main(int argc, char* argv[]) {
 
             taskStruct t = downloaded_files[0];
 
-            string program = "..\\Determinant_calculation_with_CUDA.exe " + t.downloaded_file + " dataset";
+            string program = "..\\Cuda\\Determinant_calculation_with_CUDA.exe " + t.downloaded_file + " dataset";
             int programStatus = system(program.c_str());
 
             double result;

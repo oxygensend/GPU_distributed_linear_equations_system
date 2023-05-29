@@ -1,0 +1,4 @@
+D:\Moja edukacja\AGH2\semestr 1\Projektowe\GPU_linear_equations_system\Determinant_calculation_with_CUDA\x64\Release\Determinant_calculation_with_CUDA.vcxproj.CopyComplete
+D:\Moja edukacja\AGH2\semestr 1\Projektowe\GPU_linear_equations_system\Determinant_calculation_with_CUDA\x64\Release\Determinant_calculation_with_CUDA.exe
+D:\Moja edukacja\AGH2\semestr 1\Projektowe\GPU_linear_equations_system\Determinant_calculation_with_CUDA\x64\Release\hdf5.dll
+D:\Moja edukacja\AGH2\semestr 1\Projektowe\GPU_linear_equations_system\Determinant_calculation_with_CUDA\x64\Release\zlib1.dll
