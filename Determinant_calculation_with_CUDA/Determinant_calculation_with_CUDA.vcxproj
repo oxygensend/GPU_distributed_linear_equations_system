@@ -137,7 +137,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cusolver.lib;cudart.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cusolver.lib;cudart.lib;"D:\Aplikacje\vcpkg\vcpkg\installed\x64-windows\lib\hdf5.lib";"D:\Aplikacje\vcpkg\vcpkg\installed\x64-windows\lib\hdf5_hl.lib";"D:\Aplikacje\vcpkg\vcpkg\installed\x64-windows\lib\zlib.lib";%(AdditionalDependencies)</AdditionalDependencies>
+      <AddModuleNamesToAssembly>$(VcpkgRoot)\installed\x64-windows\lib;%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
     </Link>
     <CudaCompile>
       <CodeGeneration>compute_50,sm_50</CodeGeneration>
