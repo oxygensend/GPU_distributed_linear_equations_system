@@ -27,7 +27,7 @@ def register():
         'client': None
     }
     
-    if check_if_worker_exists_by_status_port_and_ip(status_port, ip) is  None:
+    if check_if_worker_exists_by_status_port_and_ip(status_port, ip, workers) is  None:
         workers.append(worker)
         return {'status': 'ok'}, 201
     else:

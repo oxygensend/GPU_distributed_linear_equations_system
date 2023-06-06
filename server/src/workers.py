@@ -21,37 +21,37 @@ def check_workers():
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 s.bind(('0.0.0.0', 65432))
-                s.settimeout(1)
+                s.settimeout(10)
                 s.connect((worker['ip'], worker['status_port']))
                 s.sendall(b'ping')
                 s.close()
                 worker['status'] = 'online'
                 print('Stable connection with ', worker)
             except Exception as e:
-                if worker['status'] == 'offline':
-                    continue
+                pass
+                #if worker['status'] == 'offline':
+                #    continue
 
-                print(e, worker)
+                #print(e, worker)
                 # send event if worker is offline
-                worker['status'] = 'offline'
-                event_queue.put(WorkerOfflineEvent({"a": "a"}))
+                #worker['status'] = 'offline'
+                #event_queue.put(WorkerOfflineEvent({"a": "a"}))
 
         sleep(SLEEP_TIME_S)
 
 
-def check_if_worker_exists_by_status_port_and_ip(port: int, ip: str):
+def check_if_worker_exists_by_status_port_and_ip(port: int, ip: str, workers: list):
     for  key,worker in enumerate(workers):
+        print(worker)
         if worker['status_port'] == port and worker['ip'] == ip:
             return key;
-        else:
-            return None
+    return None
         
 def check_if_worker_exists_by_app_port_and_ip(port: int, ip: str):
     for  key,worker in enumerate(workers):
         if worker['app_port'] == port and worker['ip'] == ip:
             return key;
-        else:
-            return None
+    return None
 
 def get_all_online_workers() -> dict:
         return {key: worker for key, worker in workers if worker["status_port"] == "online"}
