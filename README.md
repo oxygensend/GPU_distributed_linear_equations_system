@@ -12,4 +12,5 @@ git clone https://github.com/oxygensend/GPU_distributed_linear_equations_system.
 cd GPU_distributed_linear_equations_system/
 cd server
 pip install flask simple_websocket_server numpy
+python index.py
 ```
