@@ -14,3 +14,18 @@ cd server
 pip install flask simple_websocket_server numpy
 python index.py
 ```
+
+### GPU
+```
+Step 1: Clone the vcpkg repo
+	git clone https://github.com/Microsoft/vcpkg.git
+Step 2: Run the bootstrap script to build vcpkg
+	.\vcpkg\bootstrap-vcpkg.bat
+Step 3: Install necessary libraries
+	vcpkg install highfive
+Step 4:
+	 vcpkg integrate install 
+Step 5: Install CUDA and CUDA dependencies, everything under this link:
+https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
+	
+```
