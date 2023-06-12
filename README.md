@@ -6,9 +6,6 @@ Obliczenia rozproszone na platformach graficznych (GPU). Celem projektu jest stw
 ## EN
 Distributed computing on graphics processing unit (GPU) platforms. The goal of the project is to develop a system for solving a system of linear equations using GPUs in a distributed system. The system must consist of a minimum of three independent machines communicating over a local network. In case one of the machines stops working, the others should be able to continue its work.	
 
-# Server
-
-# Client GPU
 # Client CPU
 ## PL
 Wymagana wersja `C++17`
@@ -25,7 +22,6 @@ Program przyjmuje opcjonalny argument jaki jest address ip/nazwa domeny serwera.
 Przykład wywołania programu: ` ./client.exe 127.0.0.1 `. Zalecana jest kompilacja poprzez Visual Studio.
 
 Skompilowana wersja klienta GPU obsługującego obliczenia wraz z wszystkimi zaleznosciami znajduje się w katalogu `Client_windows_version`, dzieki temu doinstalowywanie dodatkowych bibliotek nie jest potrzebne.
-
 
 ## EN
 
@@ -52,6 +48,33 @@ The compiled version of the GPU computing client with all the dependencies is lo
     - VS SLN
 
 
+# Server
 
+## PL
+Serwer obsługujący zdalne połączenie pomiędzy jednostkami obliczeniowymi przygotowany jest w Pythonie. Aby go uruchomić należy wykonać poniższe polecenia a także otworzyć porty :3000 oraz :1111 na zewnętrzne połączenia TCP.
+
+## EN
+The server that supports remote connection between computing units is prepared in Python. To run it, you need to run the following commands and also open ports :300 and :1111 for external TCP connections.
+
+```
+git clone https://github.com/oxygensend/GPU_distributed_linear_equations_system.git
+cd GPU_distributed_linear_equations_system/
+cd server
+pip install flask simple_websocket_server numpy
+python index.py
+```
+
+# GPU Client
+```
+Step 1: Clone the vcpkg repo
+	git clone https://github.com/Microsoft/vcpkg.git
+Step 2: Run the bootstrap script to build vcpkg
+	.\vcpkg\bootstrap-vcpkg.bat
+Step 3: Install necessary libraries
+	vcpkg install highfive
+Step 4:
+	 vcpkg integrate install 
+Step 5: Install CUDA and CUDA dependencies, everything under this link:
+https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html
 	
- 
+```
