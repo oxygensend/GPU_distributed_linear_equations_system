@@ -1,14 +1,11 @@
 import numpy as np
-from .worker_offline_event import WorkerOfflineEvent
 import json 
-from simple_websocket_server import WebSocketServer, WebSocket
-import time
+from simple_websocket_server import  WebSocket
 import math
-import h5py
 from .problem_generator import ProblemGenerator
-from .workers import workers, check_if_worker_exists_by_app_port_and_ip, check_if_worker_exists_by_status_port_and_ip
-#from .worker_offline_event import WorkerOfflineEvent
+from .workers import workers
 import queue
+
 event_queue = queue.Queue()
 tasks = []
 solution = []
@@ -119,6 +116,5 @@ class SolverServer(WebSocket):
             if tasks[tid][0] != 2:
                 tasks[tid][0] = 0
         print("disconnected!!!!")
-        #print(tasks)
 
 
