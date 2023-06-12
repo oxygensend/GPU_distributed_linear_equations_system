@@ -40,11 +40,6 @@ class ProblemGenerator:
             M.append(tmp)
             tasks.append([0, 0, 0])
 
-        # for ind, matrix in enumerate(M):
-        #     with open(app.root_path + '/../data/data' + str(ind) + '.txt','w') as f:
-        #         np.savetxt(f, matrix, fmt='%g', delimiter=' ')
-            # if ind%1 == 0:
-                # print(str(ind) + "/" + str(x_size))  
         
         for ind, matrix in enumerate(M):
             h5f = h5py.File(app.root_path + '/../data/data'+str(ind)+'.h5', 'w')
